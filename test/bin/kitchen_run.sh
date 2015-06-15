@@ -126,7 +126,7 @@ func_converge() {
   echo "run_list=(${run_list[@]})"
   echo 'for file in ${run_list[@]}'
   echo 'do'
-  echo '  bash ${param} ${file}'
+  echo '  bash ${param} ${file} || exit $?'
   echo 'done'
   } > ./bootstrap.sh
 

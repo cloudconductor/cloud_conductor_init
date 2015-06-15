@@ -44,24 +44,6 @@ if [ $status -ne 0 ]; then
   gem install berkshelf
 fi
 
-cd ${TMP_DIR}
-log_info "install cloud_conductor_utils."
-git clone https://github.com/cloudconductor/cloud_conductor_utils.git
-
-cd cloud_conductor_utils
-rake build
-
-cd pkg
-run gem install ./*.gem
-if [ $status -ne 0 ]; then
-  log_error "install cloud_conductor_utils has finished abnormally."
-  log_error "${output}"
-  echo "${output}" >&2
-  exit $status
-fi
-
-log_info "install cloud_conductor_utils has finished successfully."
-
 run gem install serverspec
 if [ $status -ne 0 ]; then
   log_error "install serverspec has finished abnormally."
