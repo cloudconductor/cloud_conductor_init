@@ -137,4 +137,3 @@ git_checkout() {
     fi
   fi
 }
-

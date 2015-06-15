@@ -21,7 +21,7 @@ LOG_FILE="${LOG_DIR}/bootstrap.log"
 
 cd ${ROOT_DIR}
 log_info "execute first-setup."
-run ./bootstrap/bin/setup.sh
+run ./bin/setup.sh
 if [ ${status} -ne 0 ]; then
   log_error "first-setup has finished abnormally."
   log_error ${output}

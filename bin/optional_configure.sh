@@ -19,13 +19,13 @@ root_dir=$(cd $(dirname $0)/..;pwd)
 
 lib_dir=${root_dir}/lib
 
-source ${lib_dir}/common.sh
+source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
 source /opt/cloudconductor/lib/python-env.sh
 
 # checkout optional patterns, and setup consul services information of optional patterns
 
-opt_patterns=($(python_exec ${lib_dir}/patterns.py | jq -r '.[] | .name +"|"+ .url +"|"+ .revision'))
+opt_patterns=($(python_exec ${lib_dir}/optional_patterns.py | jq -r '.[] | .name +"|"+ .url +"|"+ .revision'))
 
 for ptn in ${opt_patterns[@]}
 do

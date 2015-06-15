@@ -23,7 +23,7 @@ log_info "update consul ACL for service synchronization."
 enable_service_acl
 
 log_info "execute regist_server.py."
-python_exec ${ROOT_DIR}/bootstrap/lib/regist_server.py
+python_exec ${ROOT_DIR}/lib/regist_server.py
 if [ $? -ne 0 ]; then
   log_error "regist_server.py has finished abnormally."
   exit -1
@@ -31,11 +31,11 @@ fi
 log_info "regist_server.py has finished successfully."
 
 cd ${ROOT_DIR}
-log_info "execute chef-solo."
-run ${ROOT_DIR}/bootstrap/bin/configure.sh
+log_info "execute optional_configure."
+run ${ROOT_DIR}/bin/optional_configure.sh
 if [ ${status} -ne 0 ]; then
-  log_error "chef-solo has finished abnormally."
+  log_error "optional_configure has finished abnormally."
   log_error "${output}"
   exit ${status}
 fi
-log_info "chef-solo has finished successfully."
+log_info "optional_configure has finished successfully."

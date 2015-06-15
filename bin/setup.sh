@@ -33,7 +33,7 @@ lib_dir=${root_dir}/lib
 
 event_handler_dir='/opt/consul/event_handlers'
 
-source ${lib_dir}/common.sh
+source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
 
 # epel repo
@@ -71,40 +71,7 @@ package install make || exit $?
 package install gcc || exit $?
 
 # install Consul
-remote_file https://dl.bintray.com/mitchellh/consul/${consul_version}.zip \
-  ${tmp_dir}/${consul_version}.zip \
-|| exit $?
-
-unzip -o -d ${consul_install_dir} ${tmp_dir}/${consul_version}.zip || exit $?
-chmod 755 ${consul_install_dir}/consul || exit $?
-
-
-directory ${consul_data_dir} root:root 755 || exit $?
-directory ${consul_config_dir} root:root 755 || exit $?
-
-cpu_total=`cat /proc/cpuinfo | grep "cpu cores" | head -1 | awk '{print $4}'`
-echo "GOMAXPROCS=${cpu_total}" > ${etc_config_dir}
-chmod 644 ${etc_config_dir}
-
-file_copy ${tmpls_dir}/default/consul-init.erb /etc/init.d/consul root:root 755 || exit $?
-sed -i \
-  -e "s@<%= node\['consul'\]\['etc_config_dir'\] %>@${etc_config_dir}@g" \
-  -e "s@<%= node\['consul'\]\['config_dir'\] %>@${consul_config_dir}@g" \
-  -e "s@<%= Chef::Consul.active_binary(node) %>@${consul_install_dir}/consul@g" \
-  /etc/init.d/consul \
-|| exit $?
-
-file_copy ${conf_dir}/consul_default.json ${consul_config_dir}/default.json root:root 644 || exit $?
-
-if [ "${CONSUL_SECRET_KEY}" != "" ] ; then
-  package install jq --enablerepo=epel || exit $?
-
-  jq ". + {acl_datacenter: .datacenter, acl_default_policy: \"deny\", acl_master_token: \"${CONSUL_SECRET_KEY}\", acl_token: \"anonymous\", encrypt: \"${CONSUL_SECRET_KEY}\"}" ${consul_config_dir}/default.json > ${tmp_dir}/consul_default.json
-
-  file_copy ${tmp_dir}/consul_default.json ${consul_config_dir}/default.json root:root 644 || exit $?
-fi
-
-service consul start || exit $?
+install_consul
 
 # setup Consul watches configuration file
 file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || exit $?
@@ -136,10 +103,8 @@ else
   exit $?
 fi
 
-service consul stop || exit $?
-
 # delete consul data
-rm -r -f ${consul_data_dir}/*
+delete_consul_data
 
 # install jq
 package install jq --enablerepo=epel || exit $?
