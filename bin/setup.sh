@@ -23,8 +23,8 @@ conf_dir=${root_dir}/conf
 
 tmp_dir=${TMP_DIR}
 if [ "${tmp_dir}" == "" ] ; then
-  tmp_dir=$(cd ${root_dir}/..;pwd)/tmp
-  if [ -d ${tmp_dir} ]; then
+  tmp_dir=${root_dir}/tmp
+  if [ ! -d ${tmp_dir} ]; then
     mkdir -p ${tmp_dir}
   fi
 fi
@@ -71,7 +71,7 @@ package install make || exit $?
 package install gcc || exit $?
 
 # install Consul
-install_consul
+install_consul || exit $?
 
 # setup Consul watches configuration file
 file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || exit $?
@@ -104,7 +104,7 @@ else
 fi
 
 # delete consul data
-delete_consul_data
+delete_consul_data || exit $?
 
 # install jq
 package install jq --enablerepo=epel || exit $?

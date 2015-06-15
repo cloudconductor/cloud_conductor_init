@@ -1,9 +1,24 @@
 # -*- coding: utf-8 -*-
+# Copyright 2014-2015 TIS Inc.
+#
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
+#
+#     http://www.apache.org/licenses/LICENSE-2.0
+#
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+# See the License for the specific language governing permissions and
+# limitations under the License.
 
 import ConfigParser
 import os
 
-ROOT_DIR = '/opt/cloudconductor'
+file_dir = os.path.dirname(__file__)
+ROOT_DIR = os.path.abspath(os.path.join(file_dir, '..'))
+
 LOG_DIR = os.path.join(ROOT_DIR, 'logs')
 PATTERNS_DIR = os.path.join(ROOT_DIR, 'patterns')
 CONFIG_FILE = os.path.join(ROOT_DIR, 'config')
@@ -22,6 +37,10 @@ def load(path=None):
     return Config(path)
 
 
+def file_open(path, mode):
+    return open(path, mode)
+
+
 class Config:
 
     def __init__(self, path=None):
@@ -31,7 +50,7 @@ class Config:
         self.data = self.load(path)
 
     def load(self, path):
-        fp = open(path)
+        fp = file_open(path, 'r')
         lines = fp.readlines()
         fp.close
 
