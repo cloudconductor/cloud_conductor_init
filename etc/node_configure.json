@@ -1,7 +1,0 @@
-{
-  "name": "bootstrap",
-  "description": "Configure fundamental environment",
-  "run_list" : [
-    "recipe[bootstrap::configure]"
-  ]
-}
