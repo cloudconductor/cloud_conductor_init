@@ -36,7 +36,8 @@ package() {
 
       if [ $status -ne 0 ] ; then
         log_error "yum_package[${name}] install failed."
-        log_error $output
+        log_error "$output"
+        echo "$output" >&2
         return $status
       fi
       log_info "yum_package[${name}] installed ${name} at ${info[1]}."
@@ -94,10 +95,15 @@ remote_file() {
   run which wget
   if [ $status -eq 0 ] ; then
     run wget -O ${to_path} ${remote_url}
+  else
+    run which curl
+    if [ $status -eq 0 ] ; then
+      run curl -L -o ${to_path} ${remote_url}
+    fi
   fi
 
   if [ $status -ne 0 ] ; then
-    echo $output >&2
+    echo "$output" >&2
   fi
 
   return $status
@@ -110,10 +116,10 @@ git_checkout() {
 
   log_info "git cloning repo ${repository} to ${path_to_dir}"
 
-  if [ "${repository}" != "" ] ; then
+  if [[ "${repository}" != "" ]] && [[ ! -d ${path_to_dir} ]] && [[ ! "$(ls -A ${path_to_dir})"  ]] ; then
     run git clone ${repository} ${path_to_dir}
     if [ $status -ne 0 ]; then
-      echo $output >&2
+      echo "$output" >&2
       return $status
     fi
 
@@ -135,5 +141,7 @@ git_checkout() {
       status=$?
       log_info "git [${path_to_dir}] checked out branch ${branch_start_point} onto deploy."
     fi
+  else
+    log_info "git [${path_to_dir}] checkout destination $(basename ${path_to_dir}) already exists or is a non-empty directory"
   fi
 }

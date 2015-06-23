@@ -16,14 +16,13 @@
 
 import sys
 import json
-
-import consul
-import config
-
-conf = config.load()
-
+import logging
 
 def consul_kv_get(key):
+    import consul
+    import config
+
+    conf = config.load()
     c = consul.Consul()
     token_key = conf.token_key()
     index, data = c.kv.get(key, token=token_key)

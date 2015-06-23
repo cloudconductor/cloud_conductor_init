@@ -1,4 +1,4 @@
-#!/bin/sh -e
+#!/bin/sh
 # Copyright 2014-2015 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");

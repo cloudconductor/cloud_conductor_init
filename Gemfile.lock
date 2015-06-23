@@ -78,4 +78,5 @@ DEPENDENCIES
   guard-rubocop
   kitchen-docker
   rake
+  rubocop
   test-kitchen

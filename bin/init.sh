@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Copyright 2014 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -25,7 +25,7 @@ run ./bin/setup.sh
 if [ ${status} -ne 0 ]; then
   log_error "first-setup has finished abnormally."
   log_error ${output}
-  echo ${output} >&2
+  echo "${output}" >&2
   exit ${status}
 fi
 log_info "first-setup has finished successfully."
