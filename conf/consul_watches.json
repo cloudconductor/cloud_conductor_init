@@ -3,32 +3,32 @@
     {
       "type": "event",
       "name": "setup",
-      "handler": "/opt/consul/event_handlers/event-handler setup"
+      "handler": "/opt/cloudconductor/bin/scheduler push setup"
     },
     {
       "type": "event",
       "name": "configure",
-      "handler": "/opt/consul/event_handlers/event-handler configure"
+      "handler": "/opt/cloudconductor/bin/scheduler push configure"
     },
     {
       "type": "event",
       "name": "deploy",
-      "handler": "/opt/consul/event_handlers/event-handler deploy"
+      "handler": "/opt/cloudconductor/bin/scheduler push deploy"
     },
     {
       "type": "event",
       "name": "backup",
-      "handler": "/opt/consul/event_handlers/event-handler backup"
+      "handler": "/opt/cloudconductor/bin/scheduler push backup"
     },
     {
       "type": "event",
       "name": "restore",
-      "handler": "/opt/consul/event_handlers/event-handler restore"
+      "handler": "/opt/cloudconductor/bin/scheduler push restore"
     },
     {
       "type": "event",
       "name": "spec",
-      "handler": "/opt/consul/event_handlers/event-handler spec"
+      "handler": "/opt/cloudconductor/bin/scheduler push spec"
     }
   ]
 }

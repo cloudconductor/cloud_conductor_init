@@ -1,0 +1,6 @@
+host: localhost
+port: 8501
+token: __token__
+insecure-skip-verify: true
+base-dir: /opt/cloudconductor
+role: __role__

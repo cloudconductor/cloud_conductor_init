@@ -35,6 +35,7 @@ event_handler_dir='/opt/consul/event_handlers'
 
 source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
+source ${lib_dir}/scheduler.sh
 
 # epel repo
 package install epel-release || exit $?
@@ -69,6 +70,9 @@ package install unzip || exit $?
 package install rsync || exit $?
 package install make || exit $?
 package install gcc || exit $?
+
+# install Scheduler
+install_scheduler || exit $?
 
 # install Consul
 install_consul || exit $?
