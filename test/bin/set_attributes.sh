@@ -11,7 +11,6 @@ if ! which ruby ; then
   fi
 fi
 
-#CONSUL_SECRET_KEY_ENCODED=$(ruby -e "require 'cgi'; puts CGI::escape('${CONSUL_SECRET_KEY}')")
 CONSUL_SECRET_KEY_ENCODED=$(python -c "import urllib; print urllib.quote('${CONSUL_SECRET_KEY}')")
 
 json_file=${test_root}/data/attributes.json

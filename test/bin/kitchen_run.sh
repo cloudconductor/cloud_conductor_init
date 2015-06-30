@@ -63,7 +63,6 @@ func_init() {
   deploy_path=/opt/cloudconductor
 
   kitchen exec ${instance} -c "sudo rm -r -f ${root_path}" $@ || exit $?
-  #kitchen exec ${instance} -c "mkdir -p ${root_path}" $@ || exit $?
 
   expect -c "
   spawn scp -o UserKnownHostsFile=/dev/null \
@@ -85,7 +84,6 @@ func_init() {
   [ $? -eq 0 ] || exit $?
 
   kitchen exec ${instance} -c "sudo rm -r -f ${deploy_path}" $@ || exit $?
-  #kitchen exec ${instance} -c "sudo mkdir -p ${deploy_path}" $@ || exit $?
   kitchen exec ${instance} -c "sudo cp -r ${root_path} ${deploy_path}" $@ || exit $?
 }
 

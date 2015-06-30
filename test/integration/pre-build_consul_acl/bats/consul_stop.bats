@@ -14,6 +14,5 @@ load test_helper
 
 @test "consul is stopped" {
   run service consul status
-#  [ $status -eq 0 ]
   assert_equal "${lines[0]}" "consul is stopped"
 }

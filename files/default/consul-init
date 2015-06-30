@@ -15,8 +15,8 @@
 #                       * Multi Datacenter
 ### END INIT INFO
 
-if [ -f <%= node['consul']['etc_config_dir'] %> ]; then
-. <%= node['consul']['etc_config_dir'] %>
+if [ -f /etc/sysconfig/consul ]; then
+. /etc/sysconfig/consul
 fi
 
 export GOMAXPROCS=${GOMAXPROCS}
@@ -41,15 +41,15 @@ if [ -n "${STACK_NAME}" -a -n "${RESOURCE_NAME}" ]; then
     JOIN_ADDRESSES="${JOIN_ADDRESSES} -join ${JOIN_ADDRESS}"
   done
 
-  CMD="<%= Chef::Consul.active_binary(node) %> agent -server -client 0.0.0.0 ${JOIN_ADDRESSES}"
+  CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 ${JOIN_ADDRESSES}"
 
   if [ -n "$FRONTEND" -a "$FRONTEND" = "true" ]; then
     CMD="$CMD -bootstrap-expect ${BOOTSTRAP_EXPECT}"
   fi
 
-  CMD="$CMD -config-dir <%= node['consul']['config_dir'] %>"
+  CMD="$CMD -config-dir /etc/consul.d"
 else
-  CMD="<%= Chef::Consul.active_binary(node) %> agent -server -client 0.0.0.0 -bootstrap -config-dir <%= node['consul']['config_dir'] %>"
+  CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 -bootstrap -config-dir /etc/consul.d"
 fi
 
 NAME="consul"

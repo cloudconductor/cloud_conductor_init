@@ -25,13 +25,7 @@ install_consul() {
   echo "GOMAXPROCS=${cpu_total}" > ${etc_config_dir}
   chmod 644 ${etc_config_dir}
 
-  file_copy ${tmpls_dir}/default/consul-init.erb /etc/init.d/consul root:root 755 || return $?
-  sed -i \
-      -e "s@<%= node\['consul'\]\['etc_config_dir'\] %>@${etc_config_dir}@g" \
-      -e "s@<%= node\['consul'\]\['config_dir'\] %>@${consul_config_dir}@g" \
-      -e "s@<%= Chef::Consul.active_binary(node) %>@${consul_install_dir}/consul@g" \
-      /etc/init.d/consul \
-      || return $?
+  file_copy ${files_dir}/default/consul-init /etc/init.d/consul root:root 755 || return $?
 
   file_copy ${conf_dir}/consul_default.json ${consul_config_dir}/default.json root:root 644 || return $?
 

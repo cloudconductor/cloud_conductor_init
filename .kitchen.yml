@@ -10,10 +10,6 @@ platforms:
     driver:
       images: centos:centos6
       dockerfile: test/platforms/centos-6/Dockerfile
-  - name: centos-7
-    driver:
-      images: centos:centos7
-      dockerfile: test/platforms/centos-6/Dockerfile
 
 suites:
   - name: pre-build

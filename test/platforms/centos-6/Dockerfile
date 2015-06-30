@@ -29,7 +29,6 @@ RUN yum -y install make gcc gcc-c++ autoconf
 RUN curl -L http://www.opscode.com/chef/install.sh | bash
 ENV PATH ${PATH}:/opt/chef/embedded/bin
 RUN gem install berkshelf
-#RUN yum -y install https://opscode-omnibus-packages.s3.amazonaws.com/el/6/x86_64/chefdk-0.6.0-1.el6.x86_64.rpm
 
 RUN touch ./dummy_iptables
 RUN cp ./dummy_iptables /etc/init.d/iptables

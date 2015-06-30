@@ -12,7 +12,7 @@ load test_helper
   [ $status -eq 0 ]
 }
 
-@test "executable jq version is 1.4" {
+@test "executable jq version is 1.3" {
   run jq --version
   assert_success "jq version 1.3"
 }
