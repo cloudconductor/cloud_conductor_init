@@ -5,7 +5,7 @@ scheduler_config_dir='/etc/scheduler'
 
 install_scheduler() {
   rm -rf ${scheduler_install_dir}/scheduler
-  remote_file https://s3-ap-northeast-1.amazonaws.com/cloudconductor/tools/scheduler \
+  remote_file https://s3-ap-northeast-1.amazonaws.com/dev.cloudconductor.jp/tools/scheduler \
       ${scheduler_install_dir}/scheduler \
       || return $?
 
