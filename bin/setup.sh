@@ -94,6 +94,7 @@ if [ "${PATTERN_URL}" != "" ] ; then
   # checkout pattern
   git_checkout ${PATTERN_URL} /opt/cloudconductor/patterns/${PATTERN_NAME} ${PATTERN_REVISION} || exit $?
   # create symbolic link to pattern logs
+  mkdir -p /opt/cloudconductor/patterns/${PATTERN_NAME}/logs || exit $?
   link /opt/cloudconductor/patterns/${PATTERN_NAME}/logs /opt/cloudconductor/logs/${PATTERN_NAME} || exit $?
   # setup services
   for r in `echo ${ROLE} | tr -s ',' ' '`
