@@ -4,3 +4,5 @@ token: __token__
 insecure-skip-verify: true
 base-dir: /opt/cloudconductor
 role: __role__
+proxy-host: __proxy-host__
+proxy-port: __proxy-port__
