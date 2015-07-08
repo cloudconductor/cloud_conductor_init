@@ -7,6 +7,11 @@
     },
     {
       "type": "event",
+      "name": "register",
+      "handler": "/opt/cloudconductor/bin/scheduler push register"
+    },
+    {
+      "type": "event",
       "name": "configure",
       "handler": "/opt/cloudconductor/bin/scheduler push configure"
     },
