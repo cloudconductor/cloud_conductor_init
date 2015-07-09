@@ -21,10 +21,32 @@ install_scheduler() {
   sed -i \
       -e "s@__role__@${ROLE}@g" \
       -e "s@__token__@${CONSUL_SECRET_KEY}@g" \
-      -e "s@__proxy-host__@${proxy_host}@g" \
-      -e "s@__proxy-port__@${proxy_port}@g" \
       ${scheduler_config_dir}/config.yml \
       || return $?
+
+  if [ -n "${proxy_host}" ]; then
+    sed -i \
+        -e "s@__proxy-host__@${proxy_host}@g" \
+        ${scheduler_config_dir}/config.yml \
+        || return $?
+  else
+    sed -i \
+        -e "/__proxy-host__/d" \
+        ${scheduler_config_dir}/config.yml \
+        || return $?
+  fi
+
+  if [ -n "${proxy_port}" ]; then
+    sed -i \
+        -e "s@__proxy-port__@${proxy_port}@g" \
+        ${scheduler_config_dir}/config.yml \
+        || return $?
+  else
+    sed -i \
+        -e "/__proxy-port__/d" \
+        ${scheduler_config_dir}/config.yml \
+        || return $?
+  fi
 
   if [ ! -f /etc/init.d/scheduler ]; then
     ${scheduler_install_dir}/scheduler install || return $?
