@@ -29,13 +29,3 @@ if [ $? -ne 0 ]; then
   exit -1
 fi
 log_info "register_server.py has finished successfully."
-
-cd ${ROOT_DIR}
-log_info "execute optional_configure."
-run ${ROOT_DIR}/bin/optional_configure.sh
-if [ ${status} -ne 0 ]; then
-  log_error "optional_configure has finished abnormally."
-  log_error "${output}"
-  exit ${status}
-fi
-log_info "optional_configure has finished successfully."
