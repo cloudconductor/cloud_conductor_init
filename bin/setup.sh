@@ -70,6 +70,7 @@ package install unzip || exit $?
 package install rsync || exit $?
 package install make || exit $?
 package install gcc || exit $?
+package install jq --enablerepo=epel || exit $?
 
 # install Scheduler
 install_scheduler || exit $?
@@ -89,30 +90,29 @@ if [ -f /etc/udev/rules.d/70-persistent-net.rules ] ; then
   || exit $?
 fi
 
-# for pattern
-if [ "${PATTERN_URL}" != "" ] ; then
+# prepare all patterns
+for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+do
+  url=`echo ${PATTERNS_JSON} | jq -r ".${name}.url"`
+  revision=`echo ${PATTERNS_JSON} | jq -r ".${name}.revision"`
+
   # checkout pattern
-  git_checkout ${PATTERN_URL} /opt/cloudconductor/patterns/${PATTERN_NAME} ${PATTERN_REVISION} || exit $?
+  git_checkout ${url} /opt/cloudconductor/patterns/${name} ${revision} || exit $?
   # create symbolic link to pattern logs
-  mkdir -p /opt/cloudconductor/patterns/${PATTERN_NAME}/logs || exit $?
-  link /opt/cloudconductor/patterns/${PATTERN_NAME}/logs /opt/cloudconductor/logs/${PATTERN_NAME} || exit $?
+  mkdir -p /opt/cloudconductor/patterns/${name}/logs || exit $?
+  link /opt/cloudconductor/patterns/${name}/logs /opt/cloudconductor/logs/${name} || exit $?
   # setup services
   for r in `echo ${ROLE} | tr -s ',' ' '`
   do
     echo $r
-    if ls /opt/cloudconductor/patterns/${PATTERN_NAME}/services/${r}/*.json ; then
-      cp /opt/cloudconductor/patterns/${PATTERN_NAME}/services/${r}/*.json ${consul_config_dir}/
+    if ls /opt/cloudconductor/patterns/${name}/services/${r}/*.json ; then
+      cp /opt/cloudconductor/patterns/${name}/services/${r}/*.json ${consul_config_dir}/
     fi
   done
-else
-  exit $?
-fi
+done
 
 # delete consul data
 delete_consul_data || exit $?
-
-# install jq
-package install jq --enablerepo=epel || exit $?
 
 # install hping3
 package install hping3 --enablerepo=epel || exit $?
