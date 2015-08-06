@@ -35,7 +35,7 @@ event_handler_dir='/opt/consul/event_handlers'
 
 source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
-source ${lib_dir}/scheduler.sh
+source ${lib_dir}/metronome.sh
 
 # epel repo
 package install epel-release || exit $?
@@ -72,8 +72,8 @@ package install make || exit $?
 package install gcc || exit $?
 package install jq --enablerepo=epel || exit $?
 
-# install Scheduler
-install_scheduler || exit $?
+# install Metronome
+install_metronome || exit $?
 
 # install Consul
 install_consul || exit $?
