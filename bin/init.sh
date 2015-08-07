@@ -30,8 +30,8 @@ if [ ${status} -ne 0 ]; then
 fi
 log_info "first-setup has finished successfully."
 
-log_info "execute scheduler with setup event."
-/opt/cloudconductor/bin/scheduler dispatch setup
+log_info "execute metronome with setup event."
+/opt/cloudconductor/bin/metronome dispatch setup
 if [ $? -eq 0 ]; then
   log_info "setup has finished successfully."
 else
