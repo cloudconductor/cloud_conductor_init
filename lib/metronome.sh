@@ -54,6 +54,18 @@ install_metronome() {
         || return $?
   fi
 
+  if [ -n "${no_proxy}" ]; then
+    sed -i \
+        -e "s@__no-proxy__@${no_proxy}@g" \
+        ${metronome_config_dir}/config.yml \
+        || return $?
+  else
+    sed -i \
+        -e "/__no-proxy__/d" \
+        ${metronome_config_dir}/config.yml \
+        || return $?
+  fi
+
   sed -i \
       -e "s@__files__@${files}@g" \
       ${metronome_config_dir}/config.yml \
