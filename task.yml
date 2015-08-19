@@ -9,4 +9,4 @@ tasks:
     description: Add service policy on anonymous user
     operations:
       - execute:
-          file: bin/configure.sh {{config.token}}
+          script: bin/configure.sh {{config.token}}
