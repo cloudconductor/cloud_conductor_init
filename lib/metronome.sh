@@ -17,6 +17,12 @@ install_metronome() {
   proxy_host=${values[1]}
   proxy_port=${values[2]}
 
+  files="$root_dir/task.yml"
+  for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+  do
+    files=$root_dir/patterns/$name/task.yml,$files
+  done
+
   file_copy ${tmpls_dir}/default/config.yml ${metronome_config_dir}/config.yml root:root 644 || return $?
   sed -i \
       -e "s@__role__@${ROLE}@g" \
@@ -47,6 +53,11 @@ install_metronome() {
         ${metronome_config_dir}/config.yml \
         || return $?
   fi
+
+  sed -i \
+      -e "s@__files__@${files}@g" \
+      ${metronome_config_dir}/config.yml \
+      || return $?
 
   if [ ! -f /etc/init.d/metronome ]; then
     ${metronome_install_dir}/metronome install || return $?

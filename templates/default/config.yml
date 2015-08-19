@@ -2,7 +2,7 @@ host: localhost
 port: 8501
 token: __token__
 insecure-skip-verify: true
-base-dir: /opt/cloudconductor
+files: __files__
 role: __role__
 proxy-host: __proxy-host__
 proxy-port: __proxy-port__
