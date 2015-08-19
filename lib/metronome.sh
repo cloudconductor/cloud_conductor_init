@@ -26,7 +26,7 @@ install_metronome() {
   file_copy ${tmpls_dir}/default/config.yml ${metronome_config_dir}/config.yml root:root 644 || return $?
   sed -i \
       -e "s@__role__@${ROLE}@g" \
-      -e "s@__token__@${CONSUL_SECRET_KEY}@g" \
+      -e "s@__token__@'${CONSUL_SECRET_KEY}'@g" \
       ${metronome_config_dir}/config.yml \
       || return $?
 
