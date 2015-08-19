@@ -1,0 +1,12 @@
+events:
+  configure:
+    description: Prepare anonymous user on consul
+    priority: 0
+    task: configure
+
+tasks:
+  configure:
+    description: Add service policy on anonymous user
+    operations:
+      - execute:
+          file: bin/configure.sh {{config.token}}

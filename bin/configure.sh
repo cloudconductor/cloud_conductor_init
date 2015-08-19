@@ -20,7 +20,7 @@ CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
 log_info "update consul ACL for service synchronization."
-enable_service_acl
+enable_service_acl $1
 
 log_info "execute register_server.py."
 python_exec ${ROOT_DIR}/lib/register_server.py

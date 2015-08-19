@@ -128,7 +128,7 @@ function write_event_handler_result() {
 }
 
 function enable_service_acl() {
-  CONSUL_SECRET_KEY="`read_config_value CONSUL_SECRET_KEY`"
+  CONSUL_SECRET_KEY=$1
   CONSUL_SECRET_KEY_ENCODED=$(python -c "import urllib; print urllib.quote('${CONSUL_SECRET_KEY}')")
   curl -X PUT "http://localhost:8500/v1/acl/update?token=${CONSUL_SECRET_KEY_ENCODED}" -d '{"ID": "anonymous", "Name": "anonymous", "Type": "client", "Rules": "key \"/\" {policy = \"deny\"} service \"\" {policy = \"write\"}"}' >/dev/null 2>&1
 }
