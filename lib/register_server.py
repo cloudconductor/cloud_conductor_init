@@ -51,9 +51,19 @@ def get_host_info():
     pattern_name, pattern_info = get_platform_pattern()
     ipaddress = node_address(hostname())
 
-    return hostname(), {'roles': conf.roles(),
-                        'pattern': pattern_name,
-                        'private_ip': ipaddress}
+    info = {
+      'cloudconductor': {
+        'servers': {
+          hostname(): {
+            'roles': conf.roles(),
+            'pattern': pattern_name,
+            'private_ip': ipaddress
+          }
+        }
+      }
+    }
+
+    return hostname(), info
 
 if __name__ == '__main__':
     import sys
