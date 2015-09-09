@@ -20,7 +20,7 @@ CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
 log_info "update consul ACL for service synchronization."
-enable_service_acl
+enable_service_acl $1
 
 log_info "execute register_server.py."
 python_exec ${ROOT_DIR}/lib/register_server.py
@@ -29,13 +29,3 @@ if [ $? -ne 0 ]; then
   exit -1
 fi
 log_info "register_server.py has finished successfully."
-
-cd ${ROOT_DIR}
-log_info "execute optional_configure."
-run ${ROOT_DIR}/bin/optional_configure.sh
-if [ ${status} -ne 0 ]; then
-  log_error "optional_configure has finished abnormally."
-  log_error "${output}"
-  exit ${status}
-fi
-log_info "optional_configure has finished successfully."

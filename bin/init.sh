@@ -30,12 +30,11 @@ if [ ${status} -ne 0 ]; then
 fi
 log_info "first-setup has finished successfully."
 
-log_info "execute event-handler with setup event."
-CONSUL_SECRET_KEY_BASE64=`echo "${CONSUL_SECRET_KEY}" | base64`
-echo "[{\"ID\":\"0\", \"Payload\":\"${CONSUL_SECRET_KEY_BASE64}\"}]" | /bin/sh /opt/consul/event_handlers/event-handler setup
+log_info "execute metronome with setup event."
+/opt/cloudconductor/bin/metronome dispatch setup
 if [ $? -eq 0 ]; then
-  log_info "event-handler has finished successfully."
+  log_info "setup has finished successfully."
 else
-  log_error "event-handler has finished abnormally."
+  log_error "setup has finished abnormally."
   exit -1
 fi

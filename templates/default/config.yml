@@ -1,0 +1,9 @@
+host: localhost
+port: 8501
+token: __token__
+insecure-skip-verify: true
+files: __files__
+role: __role__
+proxy-host: __proxy-host__
+proxy-port: __proxy-port__
+no-proxy: __no-proxy__
