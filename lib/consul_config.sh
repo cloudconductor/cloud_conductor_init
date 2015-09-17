@@ -39,6 +39,7 @@ install_consul() {
 
   service consul start || return $?
 
+  chkconfig --add consul || return $?
 }
 
 delete_consul_data() {
