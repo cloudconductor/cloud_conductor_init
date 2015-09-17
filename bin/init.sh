@@ -42,3 +42,7 @@ fi
 if [ -f /etc/sysconfig/network ]; then
   sed -i -e 's/HOSTNAME=.*/HOSTNAME=localhost.localdomain/' /etc/sysconfig/network
 fi
+
+if [ -f /etc/cloud/cloud.cfg ]; then
+  sed -i -e '/^syslog_fix_perms/apreserve_hostname: true' /etc/cloud/cloud.cfg
+fi
