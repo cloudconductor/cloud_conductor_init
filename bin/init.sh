@@ -38,3 +38,7 @@ else
   log_error "setup has finished abnormally."
   exit -1
 fi
+
+if [ -f /etc/sysconfig/network ]; then
+  sed -i -e 's/HOSTNAME=.*/HOSTNAME=localhost.localdomain/' /etc/sysconfig/network
+fi
