@@ -1,0 +1,39 @@
+{
+  "watches": [
+    {
+      "type": "event",
+      "name": "setup",
+      "handler": "/opt/cloudconductor/bin/metronome push setup"
+    },
+    {
+      "type": "event",
+      "name": "register",
+      "handler": "/opt/cloudconductor/bin/metronome push register"
+    },
+    {
+      "type": "event",
+      "name": "configure",
+      "handler": "/opt/cloudconductor/bin/metronome push configure"
+    },
+    {
+      "type": "event",
+      "name": "deploy",
+      "handler": "/opt/cloudconductor/bin/metronome push deploy"
+    },
+    {
+      "type": "event",
+      "name": "backup",
+      "handler": "/opt/cloudconductor/bin/metronome push backup"
+    },
+    {
+      "type": "event",
+      "name": "restore",
+      "handler": "/opt/cloudconductor/bin/metronome push restore"
+    },
+    {
+      "type": "event",
+      "name": "spec",
+      "handler": "/opt/cloudconductor/bin/metronome push spec"
+    }
+  ]
+}

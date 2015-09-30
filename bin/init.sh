@@ -1,4 +1,4 @@
-#!/bin/sh
+#! /bin/sh
 # Copyright 2014 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,54 +14,35 @@
 # limitations under the License.
 
 source /opt/cloudconductor/lib/common.sh
+source /opt/cloudconductor/lib/run-base.sh
 
 CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
-log_info "set chefdk_path."
-echo "export PATH=\$PATH:/opt/chefdk/embedded/bin" > ${CHEF_ENV_FILE}
-export PATH=`chefdk_path`:${PATH}
-
-cd ${TMP_DIR}
-log_info "install cloud_conductor_utils."
-git clone https://github.com/cloudconductor/cloud_conductor_utils.git
-cd cloud_conductor_utils
-rake build
-cd pkg
-gem install ./*.gem
-if [ $? -eq 0 ]; then
-  log_info "install cloud_conductor_utils has finished successfully."
-else
-  log_error "install cloud_conductor_utils has finished abnormally."
-  exit -1
-fi
-
-cd ${CONFIG_DIR}
-log_info "execute berks."
-berks vendor ${TMP_DIR}/cookbooks
-if [ $? -eq 0 ]; then
-  log_info "berks has finished successfully."
-else
-  log_warn "berks has finished abnormally."
-fi
-
 cd ${ROOT_DIR}
-log_info "execute chef-solo."
-chef-solo -j ${CONFIG_DIR}/node_setup.json -c ${CONFIG_DIR}/solo.rb
-chefsolo_result=$?
-if [ ${chefsolo_result} -eq 0 ]; then
-  log_info "chef-solo has finished successfully."
+log_info "execute first-setup."
+run ./bin/setup.sh
+if [ ${status} -ne 0 ]; then
+  log_error "first-setup has finished abnormally."
+  log_error ${output}
+  echo "${output}" >&2
+  exit ${status}
+fi
+log_info "first-setup has finished successfully."
+
+log_info "execute metronome with setup event."
+/opt/cloudconductor/bin/metronome dispatch setup
+if [ $? -eq 0 ]; then
+  log_info "setup has finished successfully."
 else
-  log_error "chef-solo has finished abnormally."
+  log_error "setup has finished abnormally."
   exit -1
 fi
 
-log_info "execute event-handler with setup event."
-CONSUL_SECRET_KEY_BASE64=`echo "${CONSUL_SECRET_KEY}" | base64`
-echo "[{\"ID\":\"0\", \"Payload\":\"${CONSUL_SECRET_KEY_BASE64}\"}]" | /bin/sh /opt/consul/event_handlers/event-handler setup
-if [ $? -eq 0 ]; then
-  log_info "event-handler has finished successfully."
-else
-  log_error "event-handler has finished abnormally."
-  exit -1
+if [ -f /etc/sysconfig/network ]; then
+  sed -i -e 's/HOSTNAME=.*/HOSTNAME=localhost.localdomain/' /etc/sysconfig/network
+fi
+
+if [ -f /etc/cloud/cloud.cfg ]; then
+  sed -i -e '/^syslog_fix_perms/apreserve_hostname: true' /etc/cloud/cloud.cfg
 fi

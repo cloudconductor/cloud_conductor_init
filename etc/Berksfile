@@ -1,7 +1,0 @@
-source 'https://supermarket.getchef.com'
-
-cookbook 'bootstrap', path: '/opt/cloudconductor/bootstrap'
-cookbook 'iptables'
-cookbook 'yum-epel'
-cookbook 'consul'
-cookbook 'ark'

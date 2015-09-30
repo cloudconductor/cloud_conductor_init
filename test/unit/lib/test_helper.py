@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-# Copyright 2014 TIS Inc.
+# Copyright 2014-2015 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -12,13 +12,12 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-require 'rspec/core/rake_task'
 
-RSpec::Core::RakeTask.new(:spec)
+import os
+import sys
 
-begin
-  require "kitchen/rake_tasks"
-  Kitchen::RakeTasks.new
-rescue LoadError
-  puts ">>>>> Kitchen gem not loaded, omitting tasks" unless ENV["CI"]
-end
+file_dir = os.path.dirname(__file__)
+test_root = os.path.abspath(os.path.join(file_dir, '..', '..'))
+root_path = os.path.abspath(os.path.join(test_root, '..'))
+
+sys.path.append(os.path.join(root_path, 'lib'))

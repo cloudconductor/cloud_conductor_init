@@ -14,38 +14,18 @@
 # limitations under the License.
 
 source /opt/cloudconductor/lib/common.sh
+source /opt/cloudconductor/lib/python-env.sh
 
 CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
 log_info "update consul ACL for service synchronization."
-enable_service_acl
+enable_service_acl $1
 
-cd ${CONFIG_DIR}
-log_info "execute berks."
-berks vendor ${TMP_DIR}/cookbooks
-if [ $? -eq 0 ]; then
-  log_info "berks has finished successfully."
-else
-  log_warn "berks has finished abnormally."
-fi
-
-log_info "execute configure.rb."
-ruby ${BIN_DIR}/configure.rb
-if [ $? -eq 0 ]; then
-  log_info "configure.rb has finished successfully."
-else
-  log_error "configure.rb has finished abnormally."
+log_info "execute register_server.py."
+python_exec ${ROOT_DIR}/lib/register_server.py
+if [ $? -ne 0 ]; then
+  log_error "register_server.py has finished abnormally."
   exit -1
 fi
-
-cd ${ROOT_DIR}
-log_info "execute chef-solo."
-chef-solo -j ${CONFIG_DIR}/node_configure.json -c ${CONFIG_DIR}/solo.rb
-chefsolo_result=$?
-if [ ${chefsolo_result} -eq 0 ]; then
-  log_info "chef-solo has finished successfully."
-else
-  log_error "chef-solo has finished abnormally."
-  exit -1
-fi
+log_info "register_server.py has finished successfully."
