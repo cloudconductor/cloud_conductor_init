@@ -14,12 +14,12 @@ Requirements
 Prerequisites
 -------------
 
-- cloudconductor (>= 1.0)
+- cloudconductor (>= 1.1)
 
 Copyright and License
 =====================
 
-Copyright 2014 TIS inc.
+Copyright 2014,2015 TIS inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
