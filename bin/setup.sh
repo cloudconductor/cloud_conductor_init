@@ -18,7 +18,6 @@ script_root=$(cd $(dirname $0) && pwd)
 root_dir=$(cd $(dirname $0)/..;pwd)
 
 files_dir=${root_dir}/files
-tmpls_dir=${root_dir}/templates
 conf_dir=${root_dir}/conf
 
 tmp_dir=${TMP_DIR}
