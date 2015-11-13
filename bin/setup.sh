@@ -58,7 +58,7 @@ file_copy ${files_dir}/default/patterns.py ${event_handler_dir}/patterns.py root
 openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
   -set_serial 1 \
   -days 3650 \
-  -subj "/C=JP/ST=cloudconductor/L=cloudconductor/CN=`hostname`.consul" \
+  -subj "/C=JP/ST=cloudconductor/L=cloudconductor/CN=127-0-0-1.consul" \
   -out "${consul_ssl_cert}" \
   -keyout "${consul_ssl_key}" \
 || exit $?
