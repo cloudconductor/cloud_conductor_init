@@ -5,7 +5,7 @@ metronome_config_dir='/etc/metronome'
 
 install_metronome() {
   rm -rf ${metronome_install_dir}/metronome
-  remote_file http://download.cloudconductor.org/tools/metronome-0.1.0 \
+  remote_file http://download.cloudconductor.org/tools/metronome-0.2.0 \
       ${metronome_install_dir}/metronome \
       || return $?
 
