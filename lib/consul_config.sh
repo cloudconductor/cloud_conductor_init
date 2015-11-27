@@ -40,6 +40,8 @@ install_consul() {
   service consul start || return $?
 
   chkconfig --add consul || return $?
+
+  file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || return $?
 }
 
 delete_consul_data() {

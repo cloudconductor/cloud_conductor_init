@@ -77,9 +77,6 @@ install_metronome || exit $?
 # install Consul
 install_consul || exit $?
 
-# setup Consul watches configuration file
-file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || exit $?
-
 # delete 70-persistent-net.rules extra lines
 if [ -f /etc/udev/rules.d/70-persistent-net.rules ] ; then
   sed -i \
