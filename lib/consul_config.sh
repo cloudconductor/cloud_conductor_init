@@ -4,13 +4,13 @@ consul_ssl_cert='/etc/pki/tls/certs/consul.crt'
 consul_ssl_key='/etc/pki/tls/private/consul.key'
 
 consul_install_dir='/usr/local/bin'
-consul_version='0.5.2_linux_amd64'
+consul_version='consul_0.6.0_linux_amd64'
 consul_data_dir='/var/lib/consul'
 consul_config_dir='/etc/consul.d'
 etc_config_dir='/etc/sysconfig/consul'
 
 install_consul() {
-  remote_file https://dl.bintray.com/mitchellh/consul/${consul_version}.zip \
+  remote_file https://releases.hashicorp.com/consul/0.6.0/${consul_version}.zip \
       ${tmp_dir}/${consul_version}.zip \
       || return $?
 
@@ -40,6 +40,8 @@ install_consul() {
   service consul start || return $?
 
   chkconfig --add consul || return $?
+
+  file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || return $?
 }
 
 delete_consul_data() {
