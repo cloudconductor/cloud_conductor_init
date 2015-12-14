@@ -87,13 +87,10 @@ if [ -f /etc/udev/rules.d/70-persistent-net.rules ] ; then
 fi
 
 # prepare all patterns
-for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+for pattern_path in /opt/cloudconductor/patterns/*;
 do
-  url=`echo ${PATTERNS_JSON} | jq -r ".${name}.url"`
-  revision=`echo ${PATTERNS_JSON} | jq -r ".${name}.revision"`
-
-  # checkout pattern
-  git_checkout ${url} /opt/cloudconductor/patterns/${name} ${revision} || exit $?
+  # extract pattern name
+  name=${pattern_path##*/}
   # create symbolic link to pattern logs
   mkdir -p /opt/cloudconductor/patterns/${name}/logs || exit $?
   link /opt/cloudconductor/patterns/${name}/logs /opt/cloudconductor/logs/${name} || exit $?
