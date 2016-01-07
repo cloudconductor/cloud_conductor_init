@@ -26,8 +26,13 @@ if [ -f /opt/cloudconductor/config ]; then
   source /opt/cloudconductor/config
 fi
 
-# generate consul command from metadata
-if [ -n "${STACK_NAME}" -a -n "${RESOURCE_NAME}" ]; then
+if [ -z "${BOOTSTRAP_EXPECT}" ]; then
+  if [ -z "${STACK_NAME}" -o -z "${RESOURCE_NAME}" ]; then
+    echo "Can't get STACK_NAME or RESOURCE_NAME to calculate bootstrap-expect"
+    exit 1
+  fi
+
+  # calculate bootsrap-expect from metadata
   CLUSTER_ADDRESSES=`/opt/aws/bin/cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .ClusterAddresses | sed -e 's/"\([^"]*\)"/\1/'`
   FRONTEND=`/opt/aws/bin/cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .Frontend | sed -e 's/"\([^"]*\)"/\1/'`
 
@@ -41,15 +46,15 @@ if [ -n "${STACK_NAME}" -a -n "${RESOURCE_NAME}" ]; then
     JOIN_ADDRESSES="${JOIN_ADDRESSES} -join ${JOIN_ADDRESS}"
   done
 
-  CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 ${JOIN_ADDRESSES}"
+  CONSUL_CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 ${JOIN_ADDRESSES}"
 
   if [ -n "$FRONTEND" -a "$FRONTEND" = "true" ]; then
-    CMD="$CMD -bootstrap-expect ${BOOTSTRAP_EXPECT}"
+    CONSUL_CMD="$CONSUL_CMD -bootstrap-expect ${BOOTSTRAP_EXPECT}"
   fi
 
-  CMD="$CMD -config-dir /etc/consul.d"
+  CONSUL_CMD="$CONSUL_CMD -config-dir /etc/consul.d"
 else
-  CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 -bootstrap -config-dir /etc/consul.d"
+  CONSUL_CMD="/usr/local/bin/consul agent -server -client 0.0.0.0 -bootstrap-expect ${BOOTSTRAP_EXPECT} -config-dir /etc/consul.d"
 fi
 
 NAME="consul"
@@ -57,7 +62,7 @@ NAME="consul"
 PIDFILE="/var/run/$NAME.pid"
 LOGFILE="/var/log/$NAME.log"
 
-CMD="no_proxy=0.0.0.0,\${no_proxy} nohup $CMD"
+CMD="no_proxy=0.0.0.0,\${no_proxy} nohup $CONSUL_CMD"
 
 get_pid() {
     cat "$PIDFILE"
