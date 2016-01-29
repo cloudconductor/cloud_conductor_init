@@ -4,22 +4,21 @@ driver:
 
 provisioner:
   name: shell
+  data_path: ./
+  script: ./test/bootstrap.sh
 
 platforms:
   - name: centos-6
     driver:
-      images: centos:centos6
-      dockerfile: test/platforms/centos-6/Dockerfile
+  - name: centos-7.1
+    driver:
+      privileged: true
+      run_command: /sbin/init
 
 suites:
   - name: pre-build
-    run_list:
-      - ./bin/init.sh
-    attributes:
-      cc_pattern: tomcat_pattern
-      cc_revision: develop
-      cc_role: web
-      cc_token:
+    provisioner:
+      script: ./test/scripts/pre-build.sh
 
   - name: pre-build_consul_acl
     run_list:
