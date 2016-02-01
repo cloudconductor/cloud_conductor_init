@@ -7,10 +7,10 @@ load test_helper
   assert_success
 }
 
-@test "consul version is v0.5.0" {
+@test "consul version is v0.6.0" {
   run /usr/local/bin/consul --version
   assert_success
-  assert_equal "${lines[0]}" "Consul v0.5.0"
+  assert_equal "${lines[0]}" "Consul v0.6.0"
 }
 
 @test "consul config dir is exists" {
@@ -37,8 +37,13 @@ load test_helper
 }
 
 @test "consul service is found" {
-  run test -x /etc/init.d/consul
-  assert_success
+  run which systemctl
+  if [ $status -eq 0 ]; then
+    run test -x /etc/systemd/system/consul.service
+  else
+    run test -x /etc/init.d/consul
+    assert_success
+  fi
 }
 
 @test "consul event_handlers dir is exists" {

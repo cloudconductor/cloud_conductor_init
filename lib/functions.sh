@@ -25,7 +25,7 @@ package() {
 
   case $action in
     install )
-      run bash -c "yum list installed | grep '${name}\.'"
+      run bash -c "yum list installed | grep '^${name}\.'"
       info=${output}
       if [ $status -eq 0 ] ; then
         log_info "yum_package[${name}] installed ${name} at ${info[1]}. (skip)"
@@ -43,7 +43,7 @@ package() {
       log_info "yum_package[${name}] installed ${name} at ${info[1]}."
     ;;
     erase )
-      yum list installed | grep "$name" && yum erase -y ${options} "$name"
+      yum list installed | grep "^$name\." && yum erase -y ${options} "$name"
       status=$?
       if [ $status -ne 0 ] ; then
         log_error "yum_package[${name}] erase failed."
@@ -107,4 +107,102 @@ remote_file() {
   fi
 
   return $status
+}
+
+git_checkout() {
+  repository=$1
+  path_to_dir=$2
+  branch_start_point=$3
+
+  log_info "git cloning repo ${repository} to ${path_to_dir}"
+
+  if [[ "${repository}" != "" ]] && [[ ! -d ${path_to_dir} ]] && [[ ! "$(ls -A ${path_to_dir})"  ]] ; then
+    run git clone ${repository} ${path_to_dir}
+    if [ $status -ne 0 ]; then
+      echo "$output" >&2
+      return $status
+    fi
+
+    cd ${path_to_dir}
+    status=$?
+    if [ $status -ne 0 ] ; then
+      return $status
+    fi
+
+    run git checkout master
+    git branch -a | grep deploy && git branch -d deploy
+
+    if git branch -a | grep ${branch_start_point} ; then
+      git checkout -f -b deploy origin/${branch_start_point}
+      status=$?
+      log_info "git [${path_to_dir}] checked out branch ${branch_start_point} onto deploy."
+    else
+      git checkout -f -b deploy ${branch_start_point}
+      status=$?
+      log_info "git [${path_to_dir}] checked out branch ${branch_start_point} onto deploy."
+    fi
+  else
+    log_info "git [${path_to_dir}] checkout destination $(basename ${path_to_dir}) already exists or is a non-empty directory"
+  fi
+}
+
+#
+# function:: service_ctl
+#
+service_ctl() {
+  local action=$1
+  local svcname=$2
+
+  local os_version=6
+  if [ -f /etc/redhat-release ]; then
+    os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
+  fi
+
+  case ${os_version} in
+    '6' )
+      service_ctl_el6 ${action} ${svcname} || return $?
+      ;;
+    '7')
+      service_ctl_el7 ${action} ${svcname} || return $?
+      ;;
+  esac
+}
+
+service_ctl_el6() {
+  local action=$1
+  local svcname=$2
+
+  run bash -c "service --status-all | grep ${svcname}"
+  if [ $status -eq 0 ]; then
+    case ${action} in
+      'enable' )
+        /sbin/chkconfig --add ${svcname} || return $?
+        ;;
+      'disable' )
+        /sbin/chkconfig ${svcname} off
+        service ${svcname} stop
+        ;;
+      *)
+        service ${svcname} ${action} || return $?
+        ;;
+    esac
+  fi
+}
+
+service_ctl_el7() {
+  local action=$1
+  local svcname=$2
+
+  run bash -c "systemctl --all | grep \"^${svcname}\""
+  if [ "$status" -eq 0 ]; then
+    case ${action} in
+      'disable' )
+        systemctl stop ${svcname}
+        systemctl disable ${svcname}
+        ;;
+      *)
+        systemctl ${action} ${svcname} || return $?
+        ;;
+    esac
+  fi
 }

@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -e
 # Copyright 2014-2015 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -42,8 +42,12 @@ sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo || exit $?
 
 # iptables disabled
 package install iptables || exit $?
-/sbin/chkconfig iptables off
-service iptables stop
+service_ctl disable iptables
+service_ctl stop iptables
+
+service_ctl disable firewalld || exit $?
+
+package install openssl || exit $?
 
 # create directory for Consul event-handler
 directory ${event_handler_dir} root:root 755 || exit $?

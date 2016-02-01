@@ -13,6 +13,7 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+source /opt/cloudconductor/lib/functions.sh
 source /opt/cloudconductor/lib/common.sh
 source /opt/cloudconductor/lib/python-env.sh
 
