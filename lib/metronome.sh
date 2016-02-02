@@ -18,9 +18,9 @@ install_metronome() {
   proxy_port=${values[2]}
 
   files="$root_dir/task.yml"
-  for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+  for pattern_path in /opt/cloudconductor/patterns/*;
   do
-    files=$root_dir/patterns/$name/task.yml,$files
+    files=$root_dir/patterns/${pattern_path##*/}/task.yml,$files
   done
 
   file_copy ${files_dir}/default/config.yml ${metronome_config_dir}/config.yml root:root 644 || return $?
