@@ -20,6 +20,10 @@ source /opt/cloudconductor/lib/python-env.sh
 CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
+if [ -f /etc/systemd/system/metronome.service ]; then
+  systemctl enable metronome
+fi
+
 log_info "update consul ACL for service synchronization."
 enable_service_acl $1
 
