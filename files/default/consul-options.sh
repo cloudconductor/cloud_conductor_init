@@ -32,10 +32,11 @@ if [ -n "${STACK_NAME}" -a -n "${RESOURCE_NAME}" ]; then
 
 else
   OPTIONS="-server -client 0.0.0.0"
-  if [ -a "${BOOTSTRAP_EXPECT}" ]; then
+  if [ -n "${BOOTSTRAP_EXPECT}" ]; then
     OPTIONS="$OPTIONS -bootstrap-expect ${BOOTSTRAP_EXPECT}"
+  else
+    OPTIONS="$OPTIONS -bootstrap"
   fi
-  OPTIONS="$OPTIONS -bootstrap"
 fi
 
 echo OPTIONS=$OPTIONS > /etc/sysconfig/consul-options
