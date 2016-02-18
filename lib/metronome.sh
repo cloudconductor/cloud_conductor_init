@@ -74,8 +74,4 @@ install_metronome() {
   if [ ! -f /etc/init.d/metronome ]; then
     ${metronome_install_dir}/metronome install || return $?
   fi
-
-  if [ -f /etc/systemd/system/metronome.service ]; then
-    systemctl disable metronome
-  fi
 }

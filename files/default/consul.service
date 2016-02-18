@@ -1,7 +1,8 @@
 [Unit]
 Description=consul agent
-Requires=network-online.target
+Requires=consul.path network-online.target
 After=network-online.target
+ConditionPathExists=/opt/cloudconductor/config
 
 [Service]
 EnvironmentFile=/etc/sysconfig/consul

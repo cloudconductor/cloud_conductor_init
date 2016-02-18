@@ -50,6 +50,7 @@ install_consul() {
     touch /etc/sysconfig/consul-options
     file_copy ${files_dir}/default/consul-options.sh /opt/consul/consul-options.sh root:root 755 | return $?
     file_copy ${files_dir}/default/consul.service /etc/systemd/system/consul.service root:root 644 || return $?
+    file_copy ${files_dir}/default/consul.path /etc/systemd/system/consul.path root:root 644 || return $?
     systemctl daemon-reload
   fi
 
