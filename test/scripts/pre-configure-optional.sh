@@ -24,6 +24,21 @@ if [ "${CONSUL_SECRET_KEY}" != "" ] ; then
   echo "CONSUL_SECRET_KEY=${CONSUL_SECRET_KEY}" >> /opt/cloudconductor/config
 fi
 
+git clone https://github.com/cloudconductor-patterns/tomcat_pattern.git /opt/cloudconductor/patterns/tomcat_pattern
+cd /opt/cloudconductor/patterns/tomcat_pattern
+git checkout feature/support-centos7
+
+git clone https://github.com/cloudconductor-patterns/amanda_pattern.git /opt/cloudconductor/patterns/amanda_pattern
+cd /opt/cloudconductor/patterns/amanda_pattern
+git checkout develop
+
+git clone https://github.com/cloudconductor-patterns/zabbix_pattern.git /opt/cloudconductor/patterns/zabbix_pattern
+cd /opt/cloudconductor/patterns/zabbix_pattern
+git checkout develop
+
+cd /opt/cloudconductor
+echo BOOTSTRAP_EXPECT=1 >> /opt/cloudconductor/config
+
 os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
 
 # for centos6 on docker
@@ -36,6 +51,10 @@ else
 fi
 
 yum install -y python-setuptools
+
+if [ ${os_version} -eq 7 ]; then
+  yum update -y
+fi
 
 bash -ex ./bin/init.sh
 

@@ -17,6 +17,13 @@ if [ "${CONSUL_SECRET_KEY}" != "" ] ; then
   echo "CONSUL_SECRET_KEY=${CONSUL_SECRET_KEY}" >> /opt/cloudconductor/config
 fi
 
+git clone https://github.com/cloudconductor-patterns/tomcat_pattern.git /opt/cloudconductor/patterns/tomcat_pattern
+cd /opt/cloudconductor/patterns/tomcat_pattern
+git checkout feature/support-centos7
+
+cd /opt/cloudconductor
+echo BOOTSTRAP_EXPECT=1 >> /opt/cloudconductor/config
+
 os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
 
 # for centos6 on docker
@@ -30,6 +37,10 @@ fi
 
 yum install -y python-setuptools
 
+if [ ${os_version} -eq 7 ]; then
+  yum update -y
+fi
+
 bash -ex ./bin/init.sh
 
 source /opt/cloudconductor/lib/common.sh
@@ -38,11 +49,10 @@ if [ -f ${CHEF_ENV_FILE} ]; then
   source ${CHEF_ENV_FILE}
 fi
 
-which systemctl && systemctl start consul || service consul start
-
-sleep 10
-
 export no_proxy=localhost,127.0.0.1
+
+which systemctl && systemctl start consul || service consul start
+sleep 10
 
 output="$(bash -ex ./bin/configure.sh ${CONSUL_SECRET_KEY})"
 status=$?

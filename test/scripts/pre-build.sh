@@ -6,11 +6,16 @@ cd $(dirname $0)/data
 
 source ./test/scripts/env.sh web
 
-cd /opt/cloudconductor
-
 export ROLE=web
 export PATTERNS_JSON='{"tomcat_pattern":{"url":"https://github.com/cloudconductor-patterns/tomcat_pattern.git", "revision":"feature/support-centos7"}}'
 #export CONSUL_SECRET_KEY=HLsQyVZOuq6qPPzA89KEmw==
+
+git clone https://github.com/cloudconductor-patterns/tomcat_pattern.git /opt/cloudconductor/patterns/tomcat_pattern
+cd /opt/cloudconductor/patterns/tomcat_pattern
+git checkout feature/support-centos7
+
+cd /opt/cloudconductor
+echo BOOTSTRAP_EXPECT=1 >> /opt/cloudconductor/config
 
 os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
 
@@ -24,5 +29,9 @@ else
 fi
 
 yum install -y python-setuptools
+
+if [ ${os_version} -eq 7 ]; then
+  yum update -y
+fi
 
 bash -ex ./bin/init.sh
