@@ -33,8 +33,8 @@ if [ -z "${BOOTSTRAP_EXPECT}" ]; then
   fi
 
   # calculate bootsrap-expect from metadata
-  CLUSTER_ADDRESSES=`/opt/aws/bin/cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .ClusterAddresses | sed -e 's/"\([^"]*\)"/\1/'`
-  FRONTEND=`/opt/aws/bin/cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .Frontend | sed -e 's/"\([^"]*\)"/\1/'`
+  CLUSTER_ADDRESSES=`cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .ClusterAddresses | sed -e 's/"\([^"]*\)"/\1/'`
+  FRONTEND=`cfn-get-metadata -s ${STACK_NAME} -r ${RESOURCE_NAME} --region ${REGION} | jq .Frontend | sed -e 's/"\([^"]*\)"/\1/'`
 
   JOIN_ADDRESSES=""
   BOOTSTRAP_EXPECT=0
