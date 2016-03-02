@@ -4,6 +4,9 @@
       "tomcat_pattern": {
         "name": "tomcat_pattern",
         "type": "platform",
+        "protocol": "git",
+        "url": "https://github.com/cloudconductor-patterns/tomcat_pattern.git",
+        "revision": "feature/support-centos7",
         "user_attributes": {}
       },
       "amanda_pattern": {
