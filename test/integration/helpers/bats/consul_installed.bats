@@ -46,16 +46,6 @@ load test_helper
   fi
 }
 
-@test "consul event_handlers dir is exists" {
-  run test -d /opt/consul/event_handlers
-  assert_success
-}
-
-@test "consul event_handler file is exists and runnable" {
-  run test -x /opt/consul/event_handlers/event-handler
-  assert_success
-}
-
 @test "consul.key file is found" {
   run test -f /etc/pki/tls/private/consul.key
   assert_success
@@ -68,9 +58,9 @@ load test_helper
 
 @test "consul event is watched " {
 
-  for name in `(setup configure deploy backup restore spec)`
+  for name in `(setup register configure deploy backup restore spec)`
   do
     run bash -c "cat /etc/consul.d/watches.json | jq -c '.watches | .[] | [.name, .type, .handler]' | grep ${name}"
-    assert_success "[\"${name}\",\"event\",\"/opt/consul/event_handlers/event-handler ${name}\"]"
+    assert_success "[\"${name}\",\"event\",\"/opt/cloudconductor/bin/metronome push ${name}\"]"
   done
 }
