@@ -30,8 +30,6 @@ fi
 
 lib_dir=${root_dir}/lib
 
-event_handler_dir='/opt/consul/event_handlers'
-
 source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
 source ${lib_dir}/metronome.sh
@@ -48,11 +46,6 @@ service_ctl stop iptables
 service_ctl disable firewalld || exit $?
 
 package install openssl || exit $?
-
-# create directory for Consul event-handler
-directory ${event_handler_dir} root:root 755 || exit $?
-
-file_copy ${files_dir}/default/patterns.py ${event_handler_dir}/patterns.py root:root 755 || exit $?
 
 # create self-signed certificate for Consul HTTPS API
 openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
