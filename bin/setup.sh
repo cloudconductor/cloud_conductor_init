@@ -55,7 +55,6 @@ directory ${event_handler_dir} root:root 755 || exit $?
 # install event-handler
 file_copy ${files_dir}/default/event-handler ${event_handler_dir}/event-handler root:root 755 || exit $?
 
-file_copy ${files_dir}/default/action_runner.sh ${event_handler_dir}/action_runner.sh root:root 755 || exit $?
 file_copy ${files_dir}/default/patterns.py ${event_handler_dir}/patterns.py root:root 755 || exit $?
 
 # create self-signed certificate for Consul HTTPS API

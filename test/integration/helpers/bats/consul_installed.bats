@@ -56,11 +56,6 @@ load test_helper
   assert_success
 }
 
-@test "consul action_runner.sh file is exists" {
-  run test -f /opt/consul/event_handlers/action_runner.sh
-  assert_success
-}
-
 @test "consul.key file is found" {
   run test -f /etc/pki/tls/private/consul.key
   assert_success
