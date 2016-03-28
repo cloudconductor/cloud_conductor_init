@@ -221,5 +221,5 @@ preserve_hostname() {
       sed -i -e 's/\.ec2\.internal//g' /etc/hostname || return $?
       ;;
   esac
-  sed -i -e 's/preserve_hostname: true/preserve_hostname: false/g' /etc/cloud/cloud.cfg || return $?
+  sed -i -e 's/preserve_hostname: false/preserve_hostname: true/g' /etc/cloud/cloud.cfg || return $?
 }
