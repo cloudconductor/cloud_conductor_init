@@ -20,6 +20,9 @@ source /opt/cloudconductor/lib/python-env.sh
 CONFIG_DIR="${ROOT_DIR}/etc"
 LOG_FILE="${LOG_DIR}/bootstrap.log"
 
+log_info "preserve hostname by cloud-init"
+preserve_hostname
+
 log_info "update consul ACL for service synchronization."
 enable_service_acl $1
 

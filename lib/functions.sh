@@ -206,3 +206,20 @@ service_ctl_el7() {
     esac
   fi
 }
+
+preserve_hostname() {
+  local os_version=6
+  if [ -f /etc/redhat-release ]; then
+    os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
+  fi
+
+  case ${os_version} in
+    '6' )
+      sed -i -e 's/\.ec2\.internal//g' /etc/sysconfig/network || return $?
+      ;;
+    '7')
+      sed -i -e 's/\.ec2\.internal//g' /etc/hostname || return $?
+      ;;
+  esac
+  sed -i -e 's/preserve_hostname: true/preserve_hostname: false/g' /etc/cloud/cloud.cfg || return $?
+}
