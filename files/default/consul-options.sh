@@ -37,6 +37,19 @@ else
   else
     OPTIONS="$OPTIONS -bootstrap"
   fi
+
+  if [ -n "${CLUSTER_ADDRESSES}" ]; then
+    JOIN_ADDRESSES=""
+    OldIFS=$IFS
+    IFS=', '
+    for JOIN_ADDRESS in $CLUSTER_ADDRESSES;
+    do
+      JOIN_ADDRESSES="${JOIN_ADDRESSES} -join ${JOIN_ADDRESS}"
+    done
+    IFS=$OldIFS
+
+    OPTIONS="$OPTIONS ${JOIN_ADDRESSES}"
+  fi
 fi
 
 echo OPTIONS=$OPTIONS > /etc/sysconfig/consul-options
