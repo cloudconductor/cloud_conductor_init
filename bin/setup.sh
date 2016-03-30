@@ -1,4 +1,4 @@
-#! /bin/sh
+#! /bin/sh -e
 # Copyright 2014-2015 TIS Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -18,7 +18,6 @@ script_root=$(cd $(dirname $0) && pwd)
 root_dir=$(cd $(dirname $0)/..;pwd)
 
 files_dir=${root_dir}/files
-tmpls_dir=${root_dir}/templates
 conf_dir=${root_dir}/conf
 
 tmp_dir=${TMP_DIR}
@@ -31,8 +30,6 @@ fi
 
 lib_dir=${root_dir}/lib
 
-event_handler_dir='/opt/consul/event_handlers'
-
 source ${lib_dir}/functions.sh
 source ${lib_dir}/consul_config.sh
 source ${lib_dir}/metronome.sh
@@ -43,23 +40,18 @@ sed -i 's/enabled=1/enabled=0/g' /etc/yum.repos.d/epel.repo || exit $?
 
 # iptables disabled
 package install iptables || exit $?
-/sbin/chkconfig iptables off
-service iptables stop
+service_ctl disable iptables
+service_ctl stop iptables
 
-# create directory for Consul event-handler
-directory ${event_handler_dir} root:root 755 || exit $?
+service_ctl disable firewalld || exit $?
 
-# install event-handler
-file_copy ${files_dir}/default/event-handler ${event_handler_dir}/event-handler root:root 755 || exit $?
-
-file_copy ${files_dir}/default/action_runner.sh ${event_handler_dir}/action_runner.sh root:root 755 || exit $?
-file_copy ${files_dir}/default/patterns.py ${event_handler_dir}/patterns.py root:root 755 || exit $?
+package install openssl || exit $?
 
 # create self-signed certificate for Consul HTTPS API
 openssl req -new -newkey rsa:2048 -sha1 -x509 -nodes \
   -set_serial 1 \
   -days 3650 \
-  -subj "/C=JP/ST=cloudconductor/L=cloudconductor/CN=`hostname`.consul" \
+  -subj "/C=JP/ST=cloudconductor/L=cloudconductor/CN=127-0-0-1.consul" \
   -out "${consul_ssl_cert}" \
   -keyout "${consul_ssl_key}" \
 || exit $?
@@ -78,9 +70,6 @@ install_metronome || exit $?
 # install Consul
 install_consul || exit $?
 
-# setup Consul watches configuration file
-file_copy ${conf_dir}/consul_watches.json ${consul_config_dir}/watches.json root:root 644 || exit $?
-
 # delete 70-persistent-net.rules extra lines
 if [ -f /etc/udev/rules.d/70-persistent-net.rules ] ; then
   sed -i \
@@ -91,13 +80,10 @@ if [ -f /etc/udev/rules.d/70-persistent-net.rules ] ; then
 fi
 
 # prepare all patterns
-for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+for pattern_path in /opt/cloudconductor/patterns/*;
 do
-  url=`echo ${PATTERNS_JSON} | jq -r ".${name}.url"`
-  revision=`echo ${PATTERNS_JSON} | jq -r ".${name}.revision"`
-
-  # checkout pattern
-  git_checkout ${url} /opt/cloudconductor/patterns/${name} ${revision} || exit $?
+  # extract pattern name
+  name=${pattern_path##*/}
   # create symbolic link to pattern logs
   mkdir -p /opt/cloudconductor/patterns/${name}/logs || exit $?
   link /opt/cloudconductor/patterns/${name}/logs /opt/cloudconductor/logs/${name} || exit $?

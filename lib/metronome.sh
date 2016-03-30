@@ -5,7 +5,7 @@ metronome_config_dir='/etc/metronome'
 
 install_metronome() {
   rm -rf ${metronome_install_dir}/metronome
-  remote_file http://download.cloudconductor.org/tools/metronome-0.1.0 \
+  remote_file http://download.cloudconductor.org/tools/metronome-0.2.0 \
       ${metronome_install_dir}/metronome \
       || return $?
 
@@ -18,12 +18,12 @@ install_metronome() {
   proxy_port=${values[2]}
 
   files="$root_dir/task.yml"
-  for name in `echo ${PATTERNS_JSON} | jq -r 'keys | .[]'`
+  for pattern_path in /opt/cloudconductor/patterns/*;
   do
-    files=$root_dir/patterns/$name/task.yml,$files
+    files=$root_dir/patterns/${pattern_path##*/}/task.yml,$files
   done
 
-  file_copy ${tmpls_dir}/default/config.yml ${metronome_config_dir}/config.yml root:root 644 || return $?
+  file_copy ${files_dir}/default/config.yml ${metronome_config_dir}/config.yml root:root 644 || return $?
   sed -i \
       -e "s@__role__@${ROLE}@g" \
       -e "s@__token__@'${CONSUL_SECRET_KEY}'@g" \

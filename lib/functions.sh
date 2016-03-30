@@ -25,7 +25,7 @@ package() {
 
   case $action in
     install )
-      run bash -c "yum list installed | grep '${name}\.'"
+      run bash -c "yum list installed | grep '^${name}\.'"
       info=${output}
       if [ $status -eq 0 ] ; then
         log_info "yum_package[${name}] installed ${name} at ${info[1]}. (skip)"
@@ -43,7 +43,7 @@ package() {
       log_info "yum_package[${name}] installed ${name} at ${info[1]}."
     ;;
     erase )
-      yum list installed | grep "$name" && yum erase -y ${options} "$name"
+      yum list installed | grep "^$name\." && yum erase -y ${options} "$name"
       status=$?
       if [ $status -ne 0 ] ; then
         log_error "yum_package[${name}] erase failed."
@@ -144,4 +144,82 @@ git_checkout() {
   else
     log_info "git [${path_to_dir}] checkout destination $(basename ${path_to_dir}) already exists or is a non-empty directory"
   fi
+}
+
+#
+# function:: service_ctl
+#
+service_ctl() {
+  local action=$1
+  local svcname=$2
+
+  local os_version=6
+  if [ -f /etc/redhat-release ]; then
+    os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
+  fi
+
+  case ${os_version} in
+    '6' )
+      service_ctl_el6 ${action} ${svcname} || return $?
+      ;;
+    '7')
+      service_ctl_el7 ${action} ${svcname} || return $?
+      ;;
+  esac
+}
+
+service_ctl_el6() {
+  local action=$1
+  local svcname=$2
+
+  run bash -c "service --status-all | grep ${svcname}"
+  if [ $status -eq 0 ]; then
+    case ${action} in
+      'enable' )
+        /sbin/chkconfig --add ${svcname} || return $?
+        ;;
+      'disable' )
+        /sbin/chkconfig ${svcname} off
+        service ${svcname} stop
+        ;;
+      *)
+        service ${svcname} ${action} || return $?
+        ;;
+    esac
+  fi
+}
+
+service_ctl_el7() {
+  local action=$1
+  local svcname=$2
+
+  run bash -c "systemctl --all | grep \"^${svcname}\""
+  if [ "$status" -eq 0 ]; then
+    case ${action} in
+      'disable' )
+        systemctl stop ${svcname}
+        systemctl disable ${svcname}
+        ;;
+      *)
+        systemctl ${action} ${svcname} || return $?
+        ;;
+    esac
+  fi
+}
+
+preserve_hostname() {
+  local os_version=6
+  if [ -f /etc/redhat-release ]; then
+    os_version=$(rpm -qf --queryformat="%{VERSION}" /etc/redhat-release)
+  fi
+
+  case ${os_version} in
+    '6' )
+      sed -i -e 's/\.ec2\.internal//g' /etc/sysconfig/network || return $?
+      ;;
+    '7')
+      sed -i -e 's/\.ec2\.internal//g' /etc/hostname || return $?
+      ;;
+  esac
+  sed -i -e 's/preserve_hostname: false/preserve_hostname: true/g' /etc/cloud/cloud.cfg || return $?
 }

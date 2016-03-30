@@ -1,0 +1,7 @@
+[Unit]
+Description=cloud conductor config file exists
+
+[Path]
+PathExists=/opt/cloudconductor/config
+PathModified=/opt/cloudconductor/config
+PathExists=/etc/hostname

@@ -7,10 +7,10 @@ load test_helper
   assert_success
 }
 
-@test "consul version is v0.5.0" {
+@test "consul version is v0.6.0" {
   run /usr/local/bin/consul --version
   assert_success
-  assert_equal "${lines[0]}" "Consul v0.5.0"
+  assert_equal "${lines[0]}" "Consul v0.6.0"
 }
 
 @test "consul config dir is exists" {
@@ -37,23 +37,13 @@ load test_helper
 }
 
 @test "consul service is found" {
-  run test -x /etc/init.d/consul
-  assert_success
-}
-
-@test "consul event_handlers dir is exists" {
-  run test -d /opt/consul/event_handlers
-  assert_success
-}
-
-@test "consul event_handler file is exists and runnable" {
-  run test -x /opt/consul/event_handlers/event-handler
-  assert_success
-}
-
-@test "consul action_runner.sh file is exists" {
-  run test -f /opt/consul/event_handlers/action_runner.sh
-  assert_success
+  run which systemctl
+  if [ $status -eq 0 ]; then
+    run test -x /etc/systemd/system/consul.service
+  else
+    run test -x /etc/init.d/consul
+    assert_success
+  fi
 }
 
 @test "consul.key file is found" {
@@ -68,9 +58,9 @@ load test_helper
 
 @test "consul event is watched " {
 
-  for name in `(setup configure deploy backup restore spec)`
+  for name in `(setup register configure deploy backup restore spec)`
   do
     run bash -c "cat /etc/consul.d/watches.json | jq -c '.watches | .[] | [.name, .type, .handler]' | grep ${name}"
-    assert_success "[\"${name}\",\"event\",\"/opt/consul/event_handlers/event-handler ${name}\"]"
+    assert_success "[\"${name}\",\"event\",\"/opt/cloudconductor/bin/metronome push ${name}\"]"
   done
 }

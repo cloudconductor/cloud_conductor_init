@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+## version 2.0.0 (2016/03/30)
+
+  - Support CloudConductor v2.0.
+  - Support consul version 0.6.0.
+  - Support CentOS 7.
+
 ## version 1.1.0 (2015/09/30)
 
   - Support CloudConductor v1.1.

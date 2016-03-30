@@ -14,6 +14,13 @@ load test_helper
 }
 
 @test "consul is running" {
-  run service consul status
-  assert_equal "${lines[0]}" "consul is running"
+  run which systemctl
+  if [ $status -eq 0 ]; then
+    run systemctl status consul
+    run bash -c 'systemctl status consul | grep active'
+    assert_success
+  else
+    run service consul status
+    assert_equal "${lines[0]}" "consul is running"
+  fi
 }

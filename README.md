@@ -4,7 +4,7 @@ About
 This is the bootstrap library used by CloudConductor internally to initialize the system environment which patterns build.
 Currently supported:
 
-* CentOS (6.5)
+* CentOS (6.5 or later and 7.x)
 
 For more information, please visit [official web site](http://cloudconductor.org/).
 
@@ -14,12 +14,12 @@ Requirements
 Prerequisites
 -------------
 
-- cloudconductor (>= 1.1)
+- cloudconductor (>= 2.0)
 
 Copyright and License
 =====================
 
-Copyright 2014,2015 TIS inc.
+Copyright 2014-2016 TIS inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
